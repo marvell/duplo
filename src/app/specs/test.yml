@@ -1,0 +1,5 @@
+---
+image: nginx
+detach: true
+publish:
+  - 8080:80

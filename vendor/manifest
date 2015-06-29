@@ -1,0 +1,17 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "gopkg.in/yaml.v2",
+			"repository": "https://gopkg.in/yaml.v2",
+			"revision": "7ad95dd0798a40da1ccdff6dff35fd177b5edf40",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/Sirupsen/logrus",
+			"repository": "https://github.com/Sirupsen/logrus",
+			"revision": "93a1736895ca25a01a739e0394bf7f672299a27d",
+			"branch": "master"
+		}
+	]
+}
