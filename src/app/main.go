@@ -8,7 +8,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-const version = "0.0.6"
+const version = "0.1.0"
 
 var (
 	specsPath string
