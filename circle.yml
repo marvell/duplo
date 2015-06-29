@@ -1,0 +1,9 @@
+dependencies:
+  override:
+    - go get github.com/constabulary/gb/...
+  post:
+    - gb vendor update -all
+
+test:
+  override:
+    - gb test
