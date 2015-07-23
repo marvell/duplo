@@ -8,8 +8,6 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
-
-	log "github.com/Sirupsen/logrus"
 )
 
 func runCommand(command string, verbose bool) error {
@@ -19,7 +17,7 @@ func runCommand(command string, verbose bool) error {
 		return errors.New("empty command")
 	}
 
-	log.WithField("cmd", command).Debug("Running command...")
+	log.Debug("Running command...", command)
 
 	command_parts := strings.Split(command, " ")
 	command = command_parts[0]

@@ -3,20 +3,11 @@ package main
 import (
 	"net/http"
 	"strings"
-
-	log "github.com/Sirupsen/logrus"
 )
 
 type mux struct{}
 
 func (m *mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.SetOutput(w)
-	log.SetLevel(log.WarnLevel)
-	log.SetFormatter(&log.TextFormatter{
-		DisableColors:    true,
-		DisableTimestamp: true,
-	})
-
 	r.ParseForm()
 
 	var err error
@@ -25,8 +16,7 @@ func (m *mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tag := strings.ToLower(r.FormValue("tag"))
 
 	if len(name) == 0 {
-		w.WriteHeader(500)
-		log.Errorln("you should specify name of spec")
+		http.Error(w, "you should specify name of spec", 400)
 		return
 	}
 	if len(tag) == 0 {
@@ -36,8 +26,7 @@ func (m *mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	spec := newSpec(name)
 	err = spec.load()
 	if err != nil {
-		w.WriteHeader(500)
-		log.Errorln(err)
+		http.Error(w, err.Error(), 500)
 		return
 	}
 
@@ -45,16 +34,14 @@ func (m *mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	err = pullImage(spec, false)
 	if err != nil {
-		w.WriteHeader(500)
-		log.Errorln(err)
+		http.Error(w, err.Error(), 500)
 		return
 	}
 	stopContainer(spec)
 	deleteContainer(spec)
 	err = runContainer(spec, false)
 	if err != nil {
-		w.WriteHeader(500)
-		log.Errorln(err)
+		http.Error(w, err.Error(), 500)
 		return
 	}
 

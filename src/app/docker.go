@@ -2,28 +2,23 @@ package main
 
 import (
 	"fmt"
-
-	log "github.com/Sirupsen/logrus"
 )
 
 func pullImage(s *spec, verbose bool) error {
-	log.WithFields(log.Fields{
-		"name": s.Image,
-		"tag":  s.Tag,
-	}).Info("Pulling new image")
+	log.Infof("Pulling new image (%s:%s) ...", s.Image, s.Tag)
 	return runCommand("docker pull "+s.Image+":"+s.Tag, verbose)
 }
 
 func stopContainer(s *spec) error {
-	log.WithField("name", s.Name).Info("Stopping container")
+	log.Infof("Stopping container (%s) ...", s.Name)
 	return runCommand("docker stop "+s.Name, false)
 }
 func deleteContainer(s *spec) error {
-	log.WithField("name", s.Name).Info("Removing container")
+	log.Infof("Removing container (%s) ...", s.Name)
 	return runCommand("docker rm "+s.Name, false)
 }
 func runContainer(s *spec, verbose bool) error {
-	log.WithField("name", s.Name).Info("Running container")
+	log.Infof("Running container (%s) ...", s.Name)
 
 	cmd := "docker run "
 	cmd += fmt.Sprintf("--name=%s ", s.Name)
