@@ -3,9 +3,16 @@ package main
 import (
 	"net/http"
 	"strings"
+	"sync"
 )
 
 type mux struct{}
+
+var lockers map[string]*sync.Mutex
+
+func init() {
+	lockers = make(map[string]*sync.Mutex)
+}
 
 func (m *mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
@@ -22,6 +29,11 @@ func (m *mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if len(tag) == 0 {
 		tag = "latest"
 	}
+
+	if lockers[name] == nil {
+		lockers[name] = new(sync.Mutex)
+	}
+	lockers[name].Lock()
 
 	spec := newSpec(name)
 	err = spec.load()
@@ -44,6 +56,8 @@ func (m *mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+
+	lockers[name].Unlock()
 
 	w.WriteHeader(200)
 	w.Write([]byte("ok"))
