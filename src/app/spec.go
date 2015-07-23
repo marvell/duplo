@@ -27,7 +27,7 @@ func newSpec(name string) *spec {
 }
 
 func (s *spec) filePath() string {
-	return path.Join(specsPath, s.Name+".yml")
+	return path.Join(config.SpecPath, s.Name+".yml")
 }
 
 func (s *spec) exists() bool {
