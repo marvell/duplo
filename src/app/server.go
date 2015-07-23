@@ -15,6 +15,13 @@ func init() {
 }
 
 func (m *mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	user, pass, ok := r.BasicAuth()
+	if !ok || user != config.AuthUser || pass != config.AuthPass {
+		w.Header().Set("WWW-Authenticate", "Basic realm=duplo auth")
+		http.Error(w, "access denied", http.StatusUnauthorized)
+		return
+	}
+
 	r.ParseForm()
 
 	var err error
