@@ -21,7 +21,7 @@ func runContainer(s *spec, verbose bool) error {
 	log.Infof("Running container (%s) ...", s.Name)
 
 	cmd := "docker run "
-	cmd += fmt.Sprintf("--name=%s ", s.Name)
+	cmd += fmt.Sprintf("--name=%s%s ", NAME_PREFIX, s.Name)
 	for key, values := range s.Args {
 		for _, value := range values {
 			cmd += fmt.Sprintf("--%s=%s ", key, value)

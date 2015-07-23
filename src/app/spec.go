@@ -10,6 +10,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+const NAME_PREFIX = "dpl_"
+
 type spec struct {
 	Name    string
 	Image   string
