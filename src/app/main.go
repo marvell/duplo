@@ -17,6 +17,8 @@ func main() {
 		os.Exit(0)
 	}
 
+	log.Infof("Specs directory: %s", config.SpecPath)
+
 	log.Infof("Starting server on %s ...", config.BindAddr)
 	err := startServer(config.BindAddr)
 	if err != nil {

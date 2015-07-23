@@ -90,3 +90,11 @@ func (s *spec) parse(o map[string]interface{}) error {
 
 	return nil
 }
+
+func (s *spec) ImageWithTag() string {
+	return fmt.Sprintf("%s:%s", s.Image, s.Tag)
+}
+
+func (s *spec) NameWithPrefix() string {
+	return fmt.Sprintf("%s%s", NAME_PREFIX, s.Name)
+}
