@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 )
 
 type mux struct{}
@@ -22,9 +24,13 @@ func (m *mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.ParseForm()
-
 	var err error
+
+	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("Vary", "Accept-Encoding")
+	w.Header().Set("x-content-type-options", "nosniff")
+
+	r.ParseForm()
 
 	name := strings.ToLower(r.URL.Path[1:])
 	tag := strings.ToLower(r.FormValue("tag"))
@@ -51,13 +57,19 @@ func (m *mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	spec.Tag = tag
 
+	printNow(w, "pulling image")
 	err = pullImage(spec, false)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+	printNow(w, "stopping old container")
 	stopContainer(spec)
+
+	printNow(w, "removing old container")
 	deleteContainer(spec)
+
+	printNow(w, "running new container")
 	err = runContainer(spec, false)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -67,7 +79,7 @@ func (m *mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	lockers[name].Unlock()
 
 	w.WriteHeader(200)
-	w.Write([]byte("ok"))
+	printNow(w, "ok")
 }
 
 func startServer(addr string) error {
@@ -77,4 +89,10 @@ func startServer(addr string) error {
 	}
 
 	return server.ListenAndServe()
+}
+
+func printNow(w http.ResponseWriter, msg string) {
+	timestamp := time.Now().Format("15:04:05")
+	w.Write([]byte(fmt.Sprintf("[%s] %s\n", timestamp, msg)))
+	w.(http.Flusher).Flush()
 }
